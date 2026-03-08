@@ -1,0 +1,48 @@
+# Julia
+Manifest.toml
+*.ji
+
+# Environment files
+.env
+.venv
+environment.yml
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+build/
+dist/
+
+# Data files
+*.csv
+*.json
+*.h5
+
+# Jupyter notebooks
+*.ipynb
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coverage files
+*.cov
+coverage/
+
+# Documentation build
+_docs/
+build/
+
+# Test output
+*.log
+*.out
+
+# Julia package artifacts
+Artifacts.toml
+
+# Local test files
+test/
