@@ -9,7 +9,7 @@ using TimeZones
 export get_historical_data
 
 """
-    get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit)
+    get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit, adjustment="raw")
 
 Retrieve historical stock data from Alpaca Market Data V2 API.
 
@@ -20,6 +20,11 @@ Retrieve historical stock data from Alpaca Market Data V2 API.
 - `timeframe::String`: Candle timeframe (e.g., "1Day", "1Hour", "1Min")
 - `start_time::String`: Start time in ISO 8601 format (e.g., "2023-01-01T00:00:00Z")
 - `limit::Int`: Maximum number of candles to retrieve (automatically handles pagination)
+- `adjustment::String`: Adjustment type for corporate actions (default: "raw")
+  - "raw": No adjustment (raw prices)
+  - "split": Adjust for stock splits only
+  - "dividend": Adjust for dividends only
+  - "all": Adjust for both splits and dividends
 
 # Returns
 - `DataFrame`: DataFrame containing historical data ordered from oldest to newest
@@ -31,6 +36,12 @@ get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-
 
 # Get 1000 hourly candles (will make multiple API calls if needed)
 get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Hour", "2023-01-01T00:00:00Z", 1000)
+
+# Get split-adjusted daily data
+get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, adjustment="split")
+
+# Get fully adjusted data (splits + dividends)
+get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, adjustment="all")
 ```
 
 # Notes
@@ -62,7 +73,8 @@ get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Hour", "2023-01
 - Detailed progress reporting for requests over 5000 candles
 """
 function get_historical_data(api_key::String, api_secret::String, ticker::String, 
-                             timeframe::String, start_time::String, limit::Int)
+                             timeframe::String, start_time::String, limit::Int, 
+                             adjustment::String = "raw")
     
     # Alpaca Market Data V2 API endpoint
     base_url = "https://data.alpaca.markets/v2"
@@ -124,7 +136,8 @@ function get_historical_data(api_key::String, api_secret::String, ticker::String
             params = Dict(
                 "timeframe" => timeframe,
                 "start" => start_time,
-                "limit" => string(current_limit)
+                "limit" => string(current_limit),
+                "adjustment" => adjustment
             )
             
             # Add pagination token if available
