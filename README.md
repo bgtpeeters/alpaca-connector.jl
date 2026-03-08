@@ -1,6 +1,6 @@
 # Alpaca Connector
 
-[![CI](https://github.com/yourusername/alpaca-connector.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/alpaca-connector.jl/actions/workflows/ci.yml)
+[![CI](https://github.com/bgtpeeters/alpaca-connector.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/bgtpeeters/alpaca-connector.jl/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A Julia wrapper around the Alpaca Market Data V2 API and Alpaca Trading API.
@@ -15,7 +15,7 @@ A Julia wrapper around the Alpaca Market Data V2 API and Alpaca Trading API.
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/yourusername/alpaca-connector.jl")
+Pkg.add(url="https://github.com/bgtpeeters/alpaca-connector.jl")
 ```
 
 ## Usage
