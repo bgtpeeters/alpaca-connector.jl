@@ -179,7 +179,7 @@ function get_historical_data(api_key::String, api_secret::String, ticker::String
         
         # Convert to DataFrame
         df = DataFrame(
-            timestamp = ZonedDateTime[ZonedDateTime(bar["t"], dateformat"yyyy-mm-dd\THH:MM:SS\Z", tz"UTC") for bar in all_bars],
+            timestamp = ZonedDateTime[ZonedDateTime(DateTime(bar["t"], dateformat"yyyy-mm-dd\THH:MM:SS\Z"), tz"UTC") for bar in all_bars],
             open = Float64[bar["o"] for bar in all_bars],
             high = Float64[bar["h"] for bar in all_bars],
             low = Float64[bar["l"] for bar in all_bars],
