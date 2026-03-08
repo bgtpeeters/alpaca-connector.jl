@@ -45,4 +45,4 @@ build/
 Artifacts.toml
 
 # Local test files
-test/
+# test/  # Commented out - we want to include test files in the repository

@@ -1,0 +1,3 @@
+[deps]
+alpaca_connector = "3dadf3f7-be62-4b9b-bb89-ad16ca1c8fca"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
