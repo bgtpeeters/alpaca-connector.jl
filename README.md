@@ -31,7 +31,7 @@ api_secret = "your_api_secret"
 data = get_historical_data(api_key, api_secret, "AAPL", "1Day", "2023-01-01T00:00:00Z", 100)
 
 # Get split-adjusted data
-data_adjusted = get_historical_data(api_key, api_secret, "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, adjustment="split")
+data_adjusted = get_historical_data(api_key, api_secret, "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, "split")
 
 # Display the data
 println(data)
@@ -42,7 +42,7 @@ println(data)
 ### `get_historical_data`
 
 ```julia
-get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit, adjustment="raw")
+get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit, "raw")
 ```
 
 **Arguments:**

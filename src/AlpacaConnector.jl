@@ -9,7 +9,7 @@ using TimeZones
 export get_historical_data
 
 """
-    get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit, adjustment="raw")
+    get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit, "raw")
 
 Retrieve historical stock data from Alpaca Market Data V2 API.
 
@@ -38,10 +38,10 @@ get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-
 get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Hour", "2023-01-01T00:00:00Z", 1000)
 
 # Get split-adjusted daily data
-get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, adjustment="split")
+get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, "split")
 
 # Get fully adjusted data (splits + dividends)
-get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, adjustment="all")
+get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Day", "2023-01-01T00:00:00Z", 100, "all")
 ```
 
 # Notes
