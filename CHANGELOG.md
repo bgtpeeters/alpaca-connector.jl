@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial implementation of `get_historical_data` function
-- Basic Alpaca Market Data V2 API integration
-- DataFrame output with proper sorting
+- `adjustment` parameter for corporate action adjustments (splits/dividends)
+- Timezone-aware timestamps using `ZonedDateTime`
+
+### Changed
+- DataFrame numeric columns from `Real` to `Float64` for better type stability and performance
+- Enhanced rate limiting with adaptive delays for safe large requests
 
 ## [0.1.0] - 2023-01-01
 

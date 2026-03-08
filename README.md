@@ -8,7 +8,9 @@ A Julia wrapper around the Alpaca Market Data V2 API and Alpaca Trading API.
 ## Features
 
 - Retrieve historical stock data
-- Returns data as Julia DataFrames
+- Returns data as Julia DataFrames with type-stable `Float64` columns
+- Timezone-aware timestamps using `ZonedDateTime`
+- Built-in corporate action adjustments (splits/dividends)
 - Easy to use interface
 
 ## Installation
@@ -58,6 +60,9 @@ get_historical_data(api_key, api_secret, ticker, timeframe, start_time, limit, a
 
 **Returns:**
 - `DataFrame`: Historical data ordered from oldest to newest
+  - `timestamp`: `ZonedDateTime` with UTC timezone
+  - `open`, `high`, `low`, `close`: `Float64` prices
+  - `volume`: `Float64` trading volume
 
 ## Contributing
 
