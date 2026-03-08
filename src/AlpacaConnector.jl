@@ -39,16 +39,26 @@ get_historical_data("your_api_key", "your_api_secret", "AAPL", "1Hour", "2023-01
 
 # Rate Limit Considerations
 - Alpaca API has a rate limit of 200 requests per minute per API key
-- This function includes automatic rate limiting with 300ms delays between requests
-- For very large datasets (>20,000 candles), consider:
-  - Using larger timeframes (e.g., "1Day" instead of "1Hour")
-  - Breaking requests into smaller time ranges
-  - Using Alpaca's unlimited market data plan if available
-  - Implementing caching to avoid repeated requests for the same data
+- This function includes adaptive rate limiting based on request size:
+  - Small requests (<5000 candles): 200ms delays, up to 100 requests
+  - Medium requests (5000-10000 candles): 300-500ms delays, up to 200 requests
+  - Large requests (10000-20000 candles): 500ms-1s delays, up to 150 requests
+  - Very large requests (>20000 candles): 1s+ delays, up to 100 requests
+
+# Safe Usage Guidelines
+- **Up to 10,000 candles**: Safe for frequent use with built-in rate limiting
+- **10,000-20,000 candles**: Safe with cautious rate limiting (500ms+ delays)
+- **20,000+ candles**: Use with caution - consider alternative approaches:
+  - Break into multiple function calls with different time ranges
+  - Use larger timeframes (e.g., "1Day" instead of "1Hour")
+  - Implement caching to store and reuse data
+  - Use Alpaca's unlimited market data plan if available
 
 # Safety Limits
-- Maximum of 100 API requests per function call to prevent excessive usage
-- Warnings are issued when approaching rate limit thresholds
+- Adaptive maximum requests based on size (100-200 requests per call)
+- Progressive delays that increase with more requests
+- Automatic warnings for large requests
+- Detailed progress reporting for requests over 5000 candles
 """
 function get_historical_data(api_key::String, api_secret::String, ticker::String, 
                              timeframe::String, start_time::String, limit::Int)
@@ -68,30 +78,46 @@ function get_historical_data(api_key::String, api_secret::String, ticker::String
     next_page_token = nothing
     request_count = 0
     
-    # Warn about large requests that might hit rate limits
-    if limit > 5000
-        @warn "Requesting ", limit, " candles may require many API calls. Consider using a larger timeframe or breaking into smaller requests."
+    # Determine rate limiting strategy based on request size
+    if limit > 20000
+        @warn "Requesting ", limit, " candles exceeds recommended safe limit. Using conservative rate limiting."
+        max_requests = 100  # Safety limit
+        base_delay = 1.0    # 1 second delay for very large requests
+    elseif limit > 10000
+        @warn "Requesting ", limit, " candles is a large request. Using cautious rate limiting."
+        max_requests = 150  # Slightly higher limit for medium-large requests
+        base_delay = 0.5    # 500ms delay for large requests
+    elseif limit > 5000
+        @info "Requesting ", limit, " candles. Using standard rate limiting."
+        max_requests = 200  # Standard safety limit
+        base_delay = 0.3    # 300ms delay for medium requests
+    else
+        # No warning for reasonable requests
+        max_requests = 100   # Conservative limit for small requests
+        base_delay = 0.2    # 200ms delay for small requests
     end
     
     try
         while length(all_bars) < limit
             request_count += 1
             
-            # Rate limiting: Alpaca API has 200 requests per minute limit
-            # Add small delay between requests to avoid hitting rate limits
+            # Rate limiting with adaptive delays
             if request_count > 1
-                sleep(0.3)  # 300ms delay between requests (allows ~200 requests/minute)
+                # Progressive delay: starts with base_delay, increases for many requests
+                delay = base_delay * (1 + 0.1 * floor((request_count - 1) / 10))
+                sleep(delay)
+                @debug "API request ", request_count, ": waiting ", round(delay*1000), "ms"
             end
             
             # Safety check: Don't make too many requests
-            if request_count > 100
-                @warn "Made 100 API requests and still haven't reached the limit. Stopping to avoid rate limiting."
+            if request_count > max_requests
+                @warn "Made ", max_requests, " API requests and still haven't reached the limit. Stopping to avoid rate limiting."
                 break
             end
             
-            # Additional warning when approaching rate limits
-            if request_count % 50 == 0
-                @warn "Made ", request_count, " API requests so far. Consider optimizing your request."
+            # Progress reporting for large requests
+            if limit > 5000 && request_count % 20 == 0
+                @info "Progress: ", request_count, " requests made, ", length(all_bars), "/", limit, " candles retrieved"
             end
             # Query parameters
             params = Dict(
