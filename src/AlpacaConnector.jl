@@ -74,7 +74,7 @@ function get_historical_data(api_key::String, api_secret::String, ticker::String
         
         # Convert to DataFrame
         df = DataFrame(
-            timestamp = [DateTime(bar["t"]) for bar in bars],
+            timestamp = [DateTime(bar["t"], dateformat"yyyy-mm-dd\THH:MM:SS\Z") for bar in bars],
             open = [bar["o"] for bar in bars],
             high = [bar["h"] for bar in bars],
             low = [bar["l"] for bar in bars],
@@ -88,7 +88,12 @@ function get_historical_data(api_key::String, api_secret::String, ticker::String
         return df
         
     catch e
-        error("Error fetching historical data: ", e)
+        if isa(e, ArgumentError) && occursin("DateTime", string(e))
+            error("Error parsing timestamp from API response. Expected ISO 8601 format (e.g., '2023-01-01T00:00:00Z'). Received: ", 
+                  string(e))
+        else
+            error("Error fetching historical data: ", e)
+        end
     end
 end
 
